@@ -1,0 +1,6 @@
+{
+  "name": "Burak Saç Tasarım",
+  "description": "Bursa Osmangazi Güneştepe'de modern erkek saç tasarımı, sakal dizaynı, kişisel bakım ve randevu hizmeti sunan berber salonu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
