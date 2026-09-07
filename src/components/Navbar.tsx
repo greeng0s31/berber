@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scissors, Phone, Calendar, Menu, X, Clock, MapPin } from 'lucide-react';
 import { SALON_INFO } from '../data/salonData';
+import { getSalonOpenStatus } from '../utils/businessHours';
 
 interface NavbarProps {
   onOpenAppointment: (serviceId?: string) => void;
@@ -9,7 +10,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAppointment }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isOpenNow, setIsOpenNow] = useState(true);
+  const [salonStatus, setSalonStatus] = useState(getSalonOpenStatus());
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,25 +18,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAppointment }) => {
     };
     window.addEventListener('scroll', handleScroll);
 
-    // Calculate if salon is currently open based on Turkish time
-    const checkOpenStatus = () => {
-      const now = new Date();
-      // UTC+3 for Turkey
-      const utcHours = now.getUTCHours();
-      const turkeyHours = (utcHours + 3) % 24;
-      const day = now.getUTCDay(); // 0 is Sunday
-
-      if (day === 0) {
-        // Sunday 10:00 - 19:00
-        setIsOpenNow(turkeyHours >= 10 && turkeyHours < 19);
-      } else {
-        // Mon-Sat 09:00 - 21:00
-        setIsOpenNow(turkeyHours >= 9 && turkeyHours < 21);
-      }
-    };
-
-    checkOpenStatus();
-    const interval = setInterval(checkOpenStatus, 60000);
+    // Refresh every 30 seconds
+    const interval = setInterval(() => {
+      setSalonStatus(getSalonOpenStatus());
+    }, 30000);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -67,10 +53,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAppointment }) => {
           </div>
           <div className="flex items-center gap-4">
             <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 border text-[10px] font-bold tracking-wider uppercase ${
-              isOpenNow ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40' : 'bg-white/5 text-white/50 border-white/10'
+              salonStatus.isOpen ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40' : 'bg-[#111111] text-white/60 border-white/10'
             }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${isOpenNow ? 'bg-emerald-400 animate-pulse' : 'bg-white/30'}`}></span>
-              {isOpenNow ? 'Şu An Açık' : 'Şu An Kapalı (Açılış: 09:00)'}
+              <span className={`w-1.5 h-1.5 rounded-full ${salonStatus.isOpen ? 'bg-emerald-400 animate-pulse' : 'bg-white/40'}`}></span>
+              {salonStatus.isOpen ? 'Şu An Açık' : `${salonStatus.statusText} (${salonStatus.scheduleText})`}
             </span>
             <a 
               href={`tel:${SALON_INFO.phoneClean}`}
@@ -173,9 +159,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAppointment }) => {
           <div className="lg:hidden px-4 pt-4 pb-6 bg-[#0A0A0A] border-b border-white/10 animate-fadeIn">
             <div className="flex flex-col space-y-3">
               <div className="pb-3 border-b border-white/10 flex items-center justify-between text-xs uppercase tracking-wider text-white/50">
-                <span>Durum:</span>
-                <span className={`font-bold ${isOpenNow ? 'text-emerald-400' : 'text-white/50'}`}>
-                  {isOpenNow ? '● Açık (09:00 - 21:00)' : '○ Kapalı (Açılış 09:00)'}
+                <span>Çalışma Durumu:</span>
+                <span className={`font-bold ${salonStatus.isOpen ? 'text-emerald-400' : 'text-white/60'}`}>
+                  {salonStatus.isOpen ? '● Şu An Açık (09:00 - 21:00)' : `○ ${salonStatus.statusText} (${salonStatus.scheduleText})`}
                 </span>
               </div>
               {navLinks.map((link) => (

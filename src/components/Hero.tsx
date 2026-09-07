@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star, MapPin, Phone, Calendar, Navigation, ShieldCheck, Clock, Scissors, MessageSquare, ArrowUpRight } from 'lucide-react';
 import { SALON_INFO } from '../data/salonData';
+import { getSalonOpenStatus } from '../utils/businessHours';
 
 interface HeroProps {
   onOpenAppointment: (serviceId?: string) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenAppointment }) => {
+  const [salonStatus, setSalonStatus] = useState(getSalonOpenStatus());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSalonStatus(getSalonOpenStatus());
+    }, 30000);
+    return () => clearInterval(timer);
+  }, []);
   return (
     <section id="hero-section" className="relative border-b border-white/10 bg-[#0A0A0A] overflow-hidden">
       {/* Subtle grid accent background */}
@@ -118,10 +127,17 @@ export const Hero: React.FC<HeroProps> = ({ onOpenAppointment }) => {
                 <span className="px-3 py-1 bg-black/80 backdrop-blur-md border border-white/10 text-[10px] font-bold uppercase tracking-widest text-[#C4A062]">
                   Burak Saç Tasarım
                 </span>
-                <span className="px-2.5 py-1 bg-emerald-950/90 border border-emerald-800 text-[10px] font-bold uppercase tracking-widest text-emerald-300 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  Açık
-                </span>
+                {salonStatus.isOpen ? (
+                  <span className="px-2.5 py-1 bg-emerald-950/90 border border-emerald-800 text-[10px] font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Açık</span>
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-1 bg-[#111111]/95 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white/70 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80"></span>
+                    <span>{salonStatus.statusText} ({salonStatus.scheduleText})</span>
+                  </span>
+                )}
               </div>
             </div>
 

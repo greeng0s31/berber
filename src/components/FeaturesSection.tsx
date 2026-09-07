@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, ShieldCheck, Sparkles, Flame, Coffee, Award, CheckCircle2 } from 'lucide-react';
+import { Clock, ShieldCheck, Sparkles, Flame, Award, CheckCircle2 } from 'lucide-react';
 import { SALON_FEATURES } from '../data/salonData';
 
 export const FeaturesSection: React.FC = () => {
@@ -65,24 +65,6 @@ export const FeaturesSection: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Extra Comfort Bar */}
-        <div className="mt-6 p-5 sm:p-6 bg-[#111111] border border-white/10 flex flex-wrap items-center justify-around gap-4 text-xs font-bold uppercase tracking-wider text-white/70">
-          <div className="flex items-center gap-2.5">
-            <Coffee className="w-4 h-4 text-[#C4A062]" />
-            <span>Taze Demleme Çay & Türk Kahvesi</span>
-          </div>
-          <div className="hidden sm:block text-white/20">•</div>
-          <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>Yüksek Hızlı Misafir Wi-Fi</span>
-          </div>
-          <div className="hidden sm:block text-white/20">•</div>
-          <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-[#C4A062]" />
-            <span>Klimalı & Ferah Salon Ortamı</span>
-          </div>
         </div>
 
       </div>
